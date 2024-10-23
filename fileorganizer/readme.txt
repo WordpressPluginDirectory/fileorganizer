@@ -4,7 +4,7 @@ Tags: FileOrganizer, file manager, wordpress file manager, file explorer, upload
 Requires at least: 5.5
 Tested up to: 6.6
 Requires PHP: 5.5
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: LGPL v2.1
 License URI: http://www.gnu.org/licenses/lgpl-2.1.html
 
@@ -49,6 +49,9 @@ Go To your WordPress install -> Plugins -> Add New Button -> In Search Box, Look
 6. File archive as ZIP
 
 == Changelog ==
+
+= 1.1.3 (Oct 22, 2024) =
+* [Task] Improved compatibility with Softaculous Plugin.
 
 = 1.1.2 (Sep 20, 2024) =
 * [Task] Improved license handling.
