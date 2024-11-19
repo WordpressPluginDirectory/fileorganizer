@@ -2,9 +2,9 @@
 Contributors: softaculous
 Tags: FileOrganizer, file manager, wordpress file manager, file explorer, upload files, File Manage, Edit Files, Delete Files, elfinder, ftp, file transfer, update, create, delete, view, edit, rename, editor, explorer, softaculous, webuzo, Control Panel, Admin
 Requires at least: 5.5
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 5.5
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: LGPL v2.1
 License URI: http://www.gnu.org/licenses/lgpl-2.1.html
 
@@ -49,6 +49,9 @@ Go To your WordPress install -> Plugins -> Add New Button -> In Search Box, Look
 6. File archive as ZIP
 
 == Changelog ==
+
+= 1.1.4 (Nov 18, 2024) =
+* [Task] Tested with WordPress 6.7.
 
 = 1.1.3 (Oct 22, 2024) =
 * [Task] Improved compatibility with Softaculous Plugin.
