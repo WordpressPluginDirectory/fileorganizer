@@ -219,7 +219,7 @@ function fileorganizer_page_handler(){
 
 	// Load Language dynamically
 	if(!empty($fileorganizer->options['default_lang']) && $fileorganizer->options['default_lang'] != 'en') {
-		wp_register_script( 'forg-lang', FILEORGANIZER_URL .'/manager/js/i18n/elfinder.'.$fileorganizer->options['default_lang'].'.js', array('jquery'), FILEORGANIZER_VERSION);
+		wp_register_script( 'forg-lang', FILEORGANIZER_URL .'/manager/js/i18n/elfinder.'.sanitize_file_name($fileorganizer->options['default_lang']).'.js', array('jquery'), FILEORGANIZER_VERSION);
 	}
 
 	// Register styles

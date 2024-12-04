@@ -146,7 +146,7 @@ function fileorganizer_render_page(){
 	var fileorganizer_ajaxurl = "<?php echo esc_url(admin_url( 'admin-ajax.php' )); ?>";
 	var fileorganizer_ajax_nonce = "<?php echo esc_html(wp_create_nonce('fileorganizer_ajax')); ?>";
 	var fileorganizer_url = "<?php echo esc_url(FILEORGANIZER_URL); ?>/manager/";
-	var fileorganizer_lang = "<?php echo !empty($fileorganizer->options['default_lang']) ? esc_html($fileorganizer->options['default_lang']) : 'en' ?>";
+	var fileorganizer_lang = "<?php echo !empty($fileorganizer->options['default_lang']) ? esc_html(sanitize_file_name($fileorganizer->options['default_lang'])) : 'en' ?>";
 	
 	jQuery(document).ready(function() {
 

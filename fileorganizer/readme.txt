@@ -4,7 +4,7 @@ Tags: FileOrganizer, file manager, wordpress file manager, file explorer, upload
 Requires at least: 5.5
 Tested up to: 6.7
 Requires PHP: 5.5
-Stable tag: 1.1.4
+Stable tag: 1.1.5
 License: LGPL v2.1
 License URI: http://www.gnu.org/licenses/lgpl-2.1.html
 
@@ -49,6 +49,9 @@ Go To your WordPress install -> Plugins -> Add New Button -> In Search Box, Look
 6. File archive as ZIP
 
 == Changelog ==
+
+= 1.1.5 (Dec 03, 2024) =
+* [Bug-fix] The language file name was not sanitized properly. This is fixed.
 
 = 1.1.4 (Nov 18, 2024) =
 * [Task] Tested with WordPress 6.7.
