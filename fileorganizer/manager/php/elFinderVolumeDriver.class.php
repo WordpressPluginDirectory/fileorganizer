@@ -280,6 +280,8 @@ abstract class elFinderVolumeDriver
             'php4:*' => 'text/x-php',
             'php5:*' => 'text/x-php',
             'php7:*' => 'text/x-php',
+            'php8:*' => 'text/x-php',
+            'php9:*' => 'text/x-php',
             'phtml:*' => 'text/x-php',
             'phar:*' => 'text/x-php',
             'cgi:*' => 'text/x-httpd-cgi',
@@ -3329,7 +3331,7 @@ abstract class elFinderVolumeDriver
             }
         }
         if (empty($file['url']) && $this->URL) {
-            $path = str_replace($this->separator, '/', substr($this->decode($hash), strlen(rtrim($this->root, '/' . $this->separator)) + 1));
+            $path = str_replace($this->separator, '/', substr($this->decode($hash), strlen(trim($this->root, '/' . $this->separator))));
             if ($this->encoding) {
                 $path = $this->convEncIn($path, true);
             }
@@ -3460,9 +3462,8 @@ abstract class elFinderVolumeDriver
             $tempPath = elFinder::getStaticVar('commonTempPath');
         } else if (function_exists('sys_get_temp_dir')) {
             $tempPath = sys_get_temp_dir();
-        } else if ($this->tmbPathWritable) {
-            $tempPath = $this->tmbPath;
         }
+        
         if ($tempPath && DIRECTORY_SEPARATOR !== '/') {
             $tempPath = str_replace('/', DIRECTORY_SEPARATOR, $tempPath);
         }
@@ -4917,7 +4918,13 @@ abstract class elFinderVolumeDriver
             $pinfo = pathinfo($path);
             $ext = isset($pinfo['extension']) ? strtolower($pinfo['extension']) : '';
         }
-        return ($ext && isset(elFinderVolumeDriver::$mimetypes[$ext])) ? elFinderVolumeDriver::$mimetypes[$ext] : 'unknown';
+        $res = ($ext && isset(elFinderVolumeDriver::$mimetypes[$ext])) ? elFinderVolumeDriver::$mimetypes[$ext] : 'unknown';
+        // Recursive check if MIME type is unknown with multiple extensions
+        if ($res === 'unknown' && strpos($pinfo['filename'], '.')) {
+            return elFinderVolumeDriver::mimetypeInternalDetect($pinfo['filename']);
+        } else {
+            return $res;
+        }
     }
 
     /**
@@ -5321,7 +5328,15 @@ abstract class elFinderVolumeDriver
         $this->rmTmb($stat); // can not do rmTmb() after _move()
         $this->clearcache();
 
-        if ($res = $this->convEncOut($this->_move($this->convEncIn($src), $this->convEncIn($dst), $this->convEncIn($name)))) {
+        $res = $this->convEncOut($this->_move($this->convEncIn($src), $this->convEncIn($dst), $this->convEncIn($name)));
+        // if moving it didn't work try to copy / delete
+        if (!$res) {
+            if ($this->copy($src, $dst, $name)) {
+                $res = $this->remove($src);
+            }
+        }
+
+        if ($res) {
             $this->clearstatcache();
             if ($stat['mime'] === 'directory') {
                 $this->updateSubdirsCache($dst, true);
@@ -6155,7 +6170,22 @@ abstract class elFinderVolumeDriver
                 if ($bgcolor === 'transparent') {
                     $bgcolor = 'rgba(255, 255, 255, 0.0)';
                 }
-                $cmd = sprintf('%s -size %dx%d "xc:%s" png:- | convert%s%s%s png:-  %s -geometry +%d+%d -compose over -composite%s %s', ELFINDER_CONVERT_PATH, $width, $height, $bgcolor, $coalesce, $jpgQuality, $interlace, $quotedPath, $x, $y, $deconstruct, $quotedDstPath);
+                $bgArg = escapeshellarg('xc:' . $bgcolor);
+                $cmd = sprintf(
+                    '%s -size %dx%d %s png:- | convert%s%s%s png:- %s -geometry +%d+%d -compose over -composite%s %s',
+                    ELFINDER_CONVERT_PATH,
+                    $width,
+                    $height,
+                    $bgArg,
+                    $coalesce,
+                    $jpgQuality,
+                    $interlace,
+                    $quotedPath,
+                    $x,
+                    $y,
+                    $deconstruct,
+                    $quotedDstPath
+                );
 
                 $result = false;
                 if ($this->procExec($cmd) === 0) {
@@ -6295,7 +6325,19 @@ abstract class elFinderVolumeDriver
                 if ($s[2] === IMAGETYPE_GIF || $s[2] === IMAGETYPE_PNG) {
                     $bgcolor = 'rgba(255, 255, 255, 0.0)';
                 }
-                $cmd = sprintf('%s%s%s%s -background "%s" -rotate %d%s -- %s %s', ELFINDER_CONVERT_PATH, $coalesce, $jpgQuality, $interlace, $bgcolor, $degree, $deconstruct, $quotedPath, $quotedDstPath);
+                $bgArg = escapeshellarg($bgcolor);
+                $cmd = sprintf(
+                    '%s%s%s%s -background %s -rotate %d%s -- %s %s',
+                    ELFINDER_CONVERT_PATH,
+                    $coalesce,
+                    $jpgQuality,
+                    $interlace,
+                    $bgArg,
+                    $degree,
+                    $deconstruct,
+                    $quotedPath,
+                    $quotedDstPath
+                );
 
                 $result = false;
                 if ($this->procExec($cmd) === 0) {
