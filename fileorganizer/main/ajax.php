@@ -193,6 +193,69 @@ function fileorganizer_ajax_handler(){
 				}
 				
 				return true;
+			},
+			'mkfile.pre' => function($cmd, &$args, $elfinder, $volume) {
+				if(!current_user_can('activate_plugins')){
+					$name = !empty($args['name']) ? $args['name'] : '';
+					if($name !== ''){
+						$validate = wp_check_filetype($name);
+						if($validate['type'] === false){
+							return array('preventexec' => true, 'results' => array('error' => __('File type is not allowed.', 'fileorganizer')));
+						}
+					}
+				}
+				return array();
+			},
+			'put.pre' => function($cmd, &$args, $elfinder, $volume) {
+				if(!current_user_can('activate_plugins')){
+					$target = !empty($args['target']) ? $args['target'] : '';
+					if($target !== ''){
+						$file = $volume->file($target);
+						if(!empty($file) && !empty($file['name'])){
+							$validate = wp_check_filetype($file['name']);
+							if($validate['type'] === false){
+								return array('preventexec' => true, 'results' => array('error' => __('File type is not allowed.', 'fileorganizer')));
+							}
+						}
+					}
+				}
+				return array();
+			},
+			'rename.pre' => function($cmd, &$args, $elfinder, $volume) {
+				if(!current_user_can('activate_plugins')){
+					$name = !empty($args['name']) ? $args['name'] : '';
+					if($name !== ''){
+						$validate = wp_check_filetype($name);
+						if($validate['type'] === false){
+							return array('preventexec' => true, 'results' => array('error' => __('File type is not allowed.', 'fileorganizer')));
+						}
+					}
+				}
+				return array();
+			},
+			'paste.pre' => function($cmd, &$args, $elfinder, $volume) {
+				if(!current_user_can('activate_plugins')){
+					$targets = !empty($args['targets']) ? $args['targets'] : array();
+
+					foreach($targets as $target){
+						$v = $elfinder->getVolume($target);
+						if(!empty($v)){
+							$file = $v->file($target);
+							if(!empty($file) && !empty($file['name'])){
+								$validate = wp_check_filetype($file['name']);
+								if($validate['type'] === false){
+									return array('preventexec' => true, 'results' => array('error' => __('File type is not allowed.', 'fileorganizer')));
+								}
+							}
+						}
+					}
+				}
+				return array();
+			},
+			'extract.pre' => function($cmd, &$args, $elfinder, $volume) {
+				if(!current_user_can('activate_plugins')){
+					return array('preventexec' => true, 'results' => array('error' => __('You do not have access to extract files.', 'fileorganizer')));
+				}
 			}
 
 		)
